@@ -12,3 +12,4 @@ data/processed/source_chunks.csv
 data/processed/vector_index/
 data/outputs/*.csv
 data/scores/*.csv
+results/*.csv
