@@ -11,3 +11,4 @@ data/raw/source_fetch_log.csv
 data/processed/source_chunks.csv
 data/processed/vector_index/
 data/outputs/*.csv
+data/scores/*.csv
