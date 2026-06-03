@@ -97,3 +97,91 @@ The total score is calculated as:
 
 ```text
 overall_score = factual_accuracy + hallucination + groundedness + citation_precision + completeness + uncertainty_handling
+
+## 15. Real Gemini Sample Results
+
+After connecting the Gemini API, the project was tested on a small real sample of three advising questions across three pipelines:
+
+- LLM-only
+- Basic RAG
+- Citation-grounded RAG
+
+This produced nine real model outputs total.
+
+The sample evaluation flow successfully generated:
+
+- Real LLM-only answers
+- Real Basic RAG answers using retrieved UIC source chunks
+- Real Citation-grounded RAG answers requiring source ID citations
+- A real sample evaluation template
+- A starter scored evaluation file
+- Pipeline-level metric summaries
+- Result charts
+
+### Sample Pipeline Comparison
+
+The starter scoring helper showed the expected pattern:
+
+- LLM-only had the weakest grounding and citation performance.
+- Basic RAG improved groundedness by using retrieved UIC source chunks.
+- Citation-grounded RAG performed best in citation behavior and source-grounded answering.
+
+These scores are not final human evaluation scores. They are starter scores used to test the evaluation and analysis pipeline. Final results will require careful manual review of each answer against the official UIC source text.
+
+### Key Observation
+
+The real sample confirms that the project can now run end-to-end:
+
+```text
+question dataset
+→ retrieval
+→ Gemini answer generation
+→ output saving
+→ evaluation template
+→ scoring
+→ metric calculation
+→ chart generation
+
+## 15. Real Gemini Sample Results
+
+After connecting the Gemini API, the project was tested on a small real sample of three advising questions across three pipelines:
+
+- LLM-only
+- Basic RAG
+- Citation-grounded RAG
+
+This produced nine real model outputs total.
+
+The sample evaluation flow successfully generated:
+
+- Real LLM-only answers
+- Real Basic RAG answers using retrieved UIC source chunks
+- Real Citation-grounded RAG answers requiring source ID citations
+- A real sample evaluation template
+- A starter scored evaluation file
+- Pipeline-level metric summaries
+- Result charts
+
+### Sample Pipeline Comparison
+
+The starter scoring helper showed the expected pattern:
+
+- LLM-only had the weakest grounding and citation performance.
+- Basic RAG improved groundedness by using retrieved UIC source chunks.
+- Citation-grounded RAG performed best in citation behavior and source-grounded answering.
+
+These scores are not final human evaluation scores. They are starter scores used to test the evaluation and analysis pipeline. Final results will require careful manual review of each answer against the official UIC source text.
+
+### Key Observation
+
+The real sample confirms that the project can now run end-to-end:
+
+```text
+question dataset
+→ retrieval
+→ Gemini answer generation
+→ output saving
+→ evaluation template
+→ scoring
+→ metric calculation
+→ chart generatio
