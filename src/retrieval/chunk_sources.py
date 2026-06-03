@@ -25,28 +25,51 @@ CHUNK_OVERLAP_WORDS = 40
 
 
 def clean_text(text: str) -> str:
-    """Light cleaning for scraped source text."""
+    """Clean scraped source text and remove common navigation noise."""
     text = text.replace("\r", "\n")
     text = re.sub(r"\n{3,}", "\n\n", text)
 
+    skip_exact_phrases = {
+        "Skip to Content",
+        "AZ Index",
+        "Catalog Home",
+        "UIC Home",
+        "Academic Catalog",
+        "Catalog Navigation",
+        "Down arrow icon",
+        "Undergraduate Catalog",
+        "Graduate and Professional Catalog",
+        "All Course Descriptions",
+        "Home",
+        "Archive & Links",
+        "On This Page",
+    }
+
+    skip_contains_phrases = [
+        "University of Illinois Chicago Academic Catalog",
+        "2026–2027 Undergraduate Catalog",
+        "2025–2026 Undergraduate Catalog",
+        "Admissions, Registration & Finances",
+        "Degree Programs and Requirements",
+        "Colleges & Departments",
+    ]
+
     lines = []
+
     for line in text.splitlines():
         stripped = line.strip()
 
         if not stripped:
             continue
 
-        skip_phrases = {
-            "Skip to Content",
-            "AZ Index",
-            "Catalog Home",
-            "UIC Home",
-            "Academic Catalog",
-            "Catalog Navigation",
-            "Down arrow icon",
-        }
+        if stripped in skip_exact_phrases:
+            continue
 
-        if stripped in skip_phrases:
+        if any(phrase in stripped for phrase in skip_contains_phrases):
+            continue
+
+        # Skip very short navigation-like lines.
+        if len(stripped.split()) <= 2 and len(stripped) < 25:
             continue
 
         lines.append(stripped)
