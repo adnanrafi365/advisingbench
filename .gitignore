@@ -6,3 +6,5 @@ __pycache__/
 .ipynb_checkpoints/
 data/processed/vector_index/
 *.log
+data/raw/source_texts/
+data/raw/source_fetch_log.csv
