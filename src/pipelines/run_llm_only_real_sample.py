@@ -4,14 +4,19 @@ Run real Gemini LLM-only answers for a small sample of AdvisingBench questions.
 This script:
 1. Loads the first 3 advising questions
 2. Sends each question to Gemini without retrieval
-3. Saves real LLM-only outputs locally
+3. Saves outputs locally
+4. Handles Gemini errors without crashing
 
 Outputs are kept local and ignored by Git.
 """
 
 from pathlib import Path
+import sys
 import time
 import pandas as pd
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.append(str(PROJECT_ROOT))
 
 from src.pipelines.llm_client import generate_text, DEFAULT_MODEL
 
@@ -19,7 +24,7 @@ from src.pipelines.llm_client import generate_text, DEFAULT_MODEL
 QUESTIONS_FILE = Path("data/questions/advising_questions_v1.csv")
 OUTPUT_FILE = Path("data/outputs/llm_only_real_sample_outputs.csv")
 NUM_QUESTIONS = 3
-REQUEST_DELAY_SECONDS = 2
+REQUEST_DELAY_SECONDS = 5
 
 
 def build_prompt(question: str) -> str:
@@ -56,7 +61,14 @@ def main() -> None:
         print(f"\nProcessing {question_id}: {question}")
 
         prompt = build_prompt(question)
-        answer = generate_text(prompt)
+
+        try:
+            answer = generate_text(prompt)
+            status = "success"
+        except Exception as error:
+            answer = f"ERROR: {type(error).__name__}: {error}"
+            status = "failed"
+            print("Gemini call failed, saving error and continuing.")
 
         rows.append({
             "question_id": question_id,
@@ -69,6 +81,7 @@ def main() -> None:
             "answer": answer,
             "used_retrieval": "no",
             "citations": "",
+            "status": status,
         })
 
         print("Answer preview:")
