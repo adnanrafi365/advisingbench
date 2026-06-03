@@ -8,15 +8,17 @@ This script reads an evaluation CSV and calculates:
 4. Overall score per answer
 5. Error label counts
 
-The evaluator should first fill the scoring columns in:
-data/scores/evaluation_template.csv
+Example:
+python src/evaluation/calculate_metrics.py
+python src/evaluation/calculate_metrics.py --input data/scores/evaluation_sample_scored.csv
 """
 
 from pathlib import Path
+import argparse
 import pandas as pd
 
 
-EVALUATION_FILE = Path("data/scores/evaluation_template.csv")
+DEFAULT_EVALUATION_FILE = Path("data/scores/evaluation_template.csv")
 RESULTS_DIR = Path("results")
 SUMMARY_BY_PIPELINE_FILE = RESULTS_DIR / "summary_by_pipeline.csv"
 SUMMARY_BY_CATEGORY_FILE = RESULTS_DIR / "summary_by_category.csv"
@@ -54,14 +56,28 @@ def split_error_labels(series: pd.Series) -> pd.Series:
     return pd.Series(labels).value_counts()
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Calculate AdvisingBench evaluation metrics.")
+    parser.add_argument(
+        "--input",
+        type=str,
+        default=str(DEFAULT_EVALUATION_FILE),
+        help="Path to scored evaluation CSV file.",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
-    if not EVALUATION_FILE.exists():
+    args = parse_args()
+    evaluation_file = Path(args.input)
+
+    if not evaluation_file.exists():
         raise FileNotFoundError(
-            f"Missing evaluation file: {EVALUATION_FILE}. "
-            "Run create_evaluation_template.py first."
+            f"Missing evaluation file: {evaluation_file}. "
+            "Run create_evaluation_template.py first or provide --input."
         )
 
-    df = pd.read_csv(EVALUATION_FILE)
+    df = pd.read_csv(evaluation_file)
 
     missing_cols = [col for col in SCORE_COLUMNS if col not in df.columns]
     if missing_cols:
@@ -95,7 +111,7 @@ def main() -> None:
     summary_by_risk.to_csv(SUMMARY_BY_RISK_FILE)
     error_counts.to_csv(ERROR_COUNTS_FILE, header=["count"])
 
-    print("Metric calculation complete.")
+    print(f"Metric calculation complete for: {evaluation_file}")
     print(f"Scored rows: {len(scored_df)}")
     print("\nSummary by pipeline:")
     print(summary_by_pipeline)
