@@ -19,3 +19,4 @@ tqdm
 beautifulsoup4
 requests
 lxml
+google-genai
