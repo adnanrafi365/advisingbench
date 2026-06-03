@@ -13,3 +13,4 @@ data/processed/vector_index/
 data/outputs/*.csv
 data/scores/*.csv
 results/*.csv
+results/*.csv
