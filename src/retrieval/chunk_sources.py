@@ -80,8 +80,36 @@ def clean_text(text: str) -> str:
     return cleaned.strip()
 
 
+def is_low_value_chunk(chunk: str) -> bool:
+    """Return True if a chunk is mostly navigation or low-value text."""
+    navigation_terms = [
+        "Catalog Home",
+        "UIC Home",
+        "AZ Index",
+        "Skip to Content",
+        "Catalog Navigation",
+        "Archive & Links",
+        "Down arrow icon",
+        "Colleges & Departments",
+        "Course Descriptions",
+        "Admissions, Registration & Finances",
+    ]
+
+    matches = sum(1 for term in navigation_terms if term in chunk)
+
+    # Skip chunks with many navigation terms.
+    if matches >= 3:
+        return True
+
+    # Skip chunks that are too short.
+    if len(chunk.split()) < 50:
+        return True
+
+    return False
+
+
 def chunk_words(text: str, chunk_size: int, overlap: int) -> list[str]:
-    """Split text into overlapping word chunks."""
+    """Split text into overlapping word chunks and skip low-value chunks."""
     words = text.split()
 
     if not words:
@@ -92,10 +120,10 @@ def chunk_words(text: str, chunk_size: int, overlap: int) -> list[str]:
 
     while start < len(words):
         end = start + chunk_size
-        chunk = " ".join(words[start:end])
+        chunk = " ".join(words[start:end]).strip()
 
-        if len(chunk.strip()) > 100:
-            chunks.append(chunk.strip())
+        if len(chunk) > 100 and not is_low_value_chunk(chunk):
+            chunks.append(chunk)
 
         if end >= len(words):
             break
